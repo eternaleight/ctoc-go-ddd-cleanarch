@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/eternaleight/go-backend/stores"
+	"github.com/eternaleight/go-backend/infra/stores"
 )
 
 // ユーザー情報を取得

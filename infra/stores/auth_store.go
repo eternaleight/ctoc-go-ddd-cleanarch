@@ -4,7 +4,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	"github.com/eternaleight/go-backend/models"
+	"github.com/eternaleight/go-backend/domain/models"
 )
 
 type AuthStore struct {

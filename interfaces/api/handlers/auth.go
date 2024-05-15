@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/eternaleight/go-backend/stores"
+	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

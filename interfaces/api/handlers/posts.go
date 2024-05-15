@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/eternaleight/go-backend/models"
-	"github.com/eternaleight/go-backend/stores"
+	"github.com/eternaleight/go-backend/domain/models"
+	"github.com/eternaleight/go-backend/infra/stores"
 )
 
 // 新しい投稿を作成する

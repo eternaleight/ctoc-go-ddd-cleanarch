@@ -1,7 +1,7 @@
 package stores
 
 import (
-	"github.com/eternaleight/go-backend/models"
+	"github.com/eternaleight/go-backend/domain/models"
 	"gorm.io/gorm"
 )
 

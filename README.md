@@ -1,6 +1,7 @@
 # go-pack
 
 ### Project structure
+
 ```
 .
 ├── README.md                      // プロジェクトの基本情報、セットアップ手順、使用方法などを記載
@@ -27,4 +28,54 @@
     ├── user_store.go              // ユーザー情報に関するデータベース処理
     ├── product_store.go           // 商品情報に関するデータベース処理
     └── purchase_store.go          // 購入情報に関するデータベース処理
+```
+
+ディレクトリ構造とその対応
+
+```
+.
+├── README.md
+├── app                         # アプリケーション層
+│   └── usecases               # ユースケース
+│       ├── auth_usecase.go
+│       ├── post_usecase.go
+│       ├── product_usecase.go
+│       ├── purchase_usecase.go
+│       └── user_usecase.go
+├── config                      # 設定
+│   ├── config.go
+│   └── database.go
+├── domain                      # ドメイン層
+│   ├── models                 # ドメインモデル
+│   │   └── models.go
+│   └── rules                  # ドメインルール
+│       ├── auth_rules.go
+│       ├── post_rules.go
+│       ├── product_rules.go
+│       ├── purchase_rules.go
+│       └── user_rules.go
+├── go.mod                      # Goモジュール設定
+├── go.sum                      # Goモジュール依存関係
+├── infra                       # インフラ層
+│   └── stores                 # データストア
+│       ├── auth_store.go
+│       ├── post_store.go
+│       ├── product_store.go
+│       ├── purchase_store.go
+│       └── user_store.go
+├── interfaces                  # インターフェース層（プレゼンテーション層）
+│   ├── api                    # APIインターフェース
+│   │   ├── handlers           # ハンドラ
+│   │   │   ├── auth.go
+│   │   │   ├── posts.go
+│   │   │   ├── products.go
+│   │   │   ├── purchase.go
+│   │   │   └── user.go
+│   │   ├── middlewares        # ミドルウェア
+│   │   │   └── isAuthenticated.go
+│   │   └── responses          # レスポンス
+│   │       ├── error.go
+│   │       └── success.go
+│   └── router.go              # ルータ設定
+└── main.go                    # エントリーポイント
 ```
