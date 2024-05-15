@@ -5,24 +5,31 @@ import (
 	"gorm.io/gorm"
 )
 
+// PostStoreInterfaceは投稿ストア操作のインターフェースを定義します
+type PostStoreInterface interface {
+	CreatePost(post *models.Post) error
+	GetLatestPosts() ([]models.Post, error)
+}
+
+// PostStoreは投稿に関するデータベース操作を管理します
 type PostStore struct {
 	DB *gorm.DB
 }
 
-// 新しいPostStoreを生成
+// NewPostStoreはPostStoreの新しいインスタンスを作成します
 func NewPostStore(db *gorm.DB) *PostStore {
 	return &PostStore{DB: db}
 }
 
-// 投稿をデータベースに保存
+// CreatePostは新しい投稿をデータベースに保存します
 func (s *PostStore) CreatePost(post *models.Post) error {
 	return s.DB.Create(post).Error
 }
 
-// 最新の投稿を取得
+// GetLatestPostsは最新の投稿を取得します
 func (s *PostStore) GetLatestPosts() ([]models.Post, error) {
 	var posts []models.Post
-	// 投稿日時の降順に10件の投稿を取得し、それらの投稿者も同時に取得
+	// 投稿日時の降順に10件の投稿を取得し、それらの投稿者も同時に取得します
 	if err := s.DB.Order("created_at desc").Limit(10).Preload("Author").Find(&posts).Error; err != nil {
 		return nil, err
 	}

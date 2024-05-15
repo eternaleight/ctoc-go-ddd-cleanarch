@@ -3,16 +3,13 @@ package interfaces
 import (
 	"os"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"github.com/eternaleight/go-backend/interfaces/api/handlers"
 	"github.com/eternaleight/go-backend/interfaces/api/middlewares"
-	"github.com/eternaleight/go-backend/infra/stores"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func SetupRouter(authHandler *handlers.AuthHandler, productHandler *handlers.ProductHandler, purchaseHandler *handlers.PurchaseHandler, userHandler *handlers.UserHandler, postHandler *handlers.PostHandler) *gin.Engine {
 	r := gin.Default()
 
 	// トレーリングスラッシュへのリダイレクトを無効にする
@@ -32,31 +29,23 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	// 'Authorization'ヘッダーを許可するためにヘッダーを追加
 	config.AllowHeaders = append(config.AllowHeaders, "Authorization")
 
-	// 新しいハンドラのインスタンスを作成し、データベースを渡す
-	productStore := stores.NewProductStore(db)
-	purchaseStore := stores.NewPurchaseStore(db)
-
-	handler := handlers.NewHandler(db)
-	productHandler := handlers.NewProductHandler(productStore)
-	purchaseHandler := handlers.NewPurchaseHandler(purchaseStore)
-
 	// auth
 	auth := r.Group("/api/auth")
 	{
-		auth.POST("/register", handler.Register)
-		auth.POST("/login", handler.Login)
+		auth.POST("/register", authHandler.Register)
+		auth.POST("/login", authHandler.Login)
 	}
 
 	// posts
 	posts := r.Group("/api/posts").Use(middlewares.IsAuthenticated())
 	{
-		posts.POST("", handler.CreatePost)
-		posts.GET("", handler.GetLatestPosts)
+		posts.POST("", postHandler.CreatePost)
+		posts.GET("", postHandler.GetLatestPosts)
 	}
 
 	// user
 	user := r.Group("/api/user").Use(middlewares.IsAuthenticated())
-	user.GET("", handler.GetUser)
+	user.GET("", userHandler.GetUser)
 
 	// products
 	products := r.Group("/api/products").Use(middlewares.IsAuthenticated())

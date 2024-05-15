@@ -5,6 +5,13 @@ import (
 	"gorm.io/gorm"
 )
 
+// UserStoreInterface defines the interface for user store operations
+type UserStoreInterface interface {
+	CreateUser(user *models.User) error
+	GetUserByID(id uint) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
+}
+
 type UserStore struct {
 	DB *gorm.DB
 }

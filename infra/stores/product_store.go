@@ -1,9 +1,19 @@
+// infra/stores/product_store.go
 package stores
 
 import (
 	"github.com/eternaleight/go-backend/domain/models"
 	"gorm.io/gorm"
 )
+
+// ProductStoreInterface defines the interface for product store operations
+type ProductStoreInterface interface {
+	CreateProduct(product *models.Product) error
+	ListProducts() ([]models.Product, error)
+	GetProductByID(id uint) (*models.Product, error)
+	UpdateProduct(id uint, product *models.Product) error
+	DeleteProduct(id uint) error
+}
 
 // 商品に関するデータベース操作を管理
 type ProductStore struct {

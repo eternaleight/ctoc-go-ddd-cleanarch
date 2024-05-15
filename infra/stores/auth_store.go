@@ -1,30 +1,37 @@
 package stores
 
 import (
+	"github.com/eternaleight/go-backend/domain/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-
-	"github.com/eternaleight/go-backend/domain/models"
 )
 
+// AuthStoreInterface defines the interface for authentication store operations
+type AuthStoreInterface interface {
+	RegisterUser(username, email, password string) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
+	ComparePassword(hashedPassword, password string) error
+}
+
+// AuthStore manages database operations related to authentication
 type AuthStore struct {
 	DB *gorm.DB
 }
 
-// 新しいAuthStoreを生成
+// NewAuthStore creates a new instance of AuthStore
 func NewAuthStore(db *gorm.DB) *AuthStore {
 	return &AuthStore{DB: db}
 }
 
-// ユーザーを登録
+// RegisterUser registers a new user in the database
 func (s *AuthStore) RegisterUser(username, email, password string) (*models.User, error) {
-	// パスワードをハッシュ化
+	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return nil, err
 	}
 
-	// ユーザー情報をデータベースに保存
+	// Save the user information in the database
 	user := &models.User{
 		Username: username,
 		Email:    email,
@@ -34,14 +41,14 @@ func (s *AuthStore) RegisterUser(username, email, password string) (*models.User
 	return user, result.Error
 }
 
-// メールアドレスに基づいてユーザー情報を取得
+// GetUserByEmail retrieves user information based on email
 func (s *AuthStore) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := s.DB.Where("email = ?", email).First(&user).Error
 	return &user, err
 }
 
-// ハッシュ化されたパスワードと平文のパスワードを比較
+// ComparePassword compares hashed password with plain text password
 func (s *AuthStore) ComparePassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
