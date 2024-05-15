@@ -1,45 +1,46 @@
+// handlers/products.go
 package handlers
 
 import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-
-	"github.com/eternaleight/go-backend/domain/models"
+	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/infra/stores"
+	"github.com/gin-gonic/gin"
 )
 
 type ProductHandler struct {
-	productStore *stores.ProductStore
+	ProductStore stores.ProductStoreInterface
 }
 
-func NewProductHandler(pStore *stores.ProductStore) *ProductHandler {
+// 新しいProductHandlerのインスタンスを初期化
+func NewProductHandler(productStore stores.ProductStoreInterface) *ProductHandler {
 	return &ProductHandler{
-		productStore: pStore,
+		ProductStore: productStore,
 	}
 }
 
 // 新しい商品を作成
 func (ph *ProductHandler) CreateProduct(c *gin.Context) {
-	var product models.Product
+	var product usecases.ProductInput
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "商品のデータの形式が正しくありません。"})
 		return
 	}
 
-	err := ph.productStore.CreateProduct(&product)
+	createdProduct, err := usecases.CreateProduct(ph.ProductStore, product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "データベースに商品を保存できませんでした。"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": product})
+	c.JSON(http.StatusOK, gin.H{"data": createdProduct})
 }
 
 // 全商品をリストとして取得
 func (ph *ProductHandler) ListProducts(c *gin.Context) {
-	products, err := ph.productStore.ListProducts()
+	products, err := usecases.ListProducts(ph.ProductStore)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品のリストの取得に失敗しました。"})
 		return
@@ -56,7 +57,7 @@ func (ph *ProductHandler) GetProductByID(c *gin.Context) {
 		return
 	}
 
-	product, err := ph.productStore.GetProductByID(uint(id))
+	product, err := usecases.GetProductByID(ph.ProductStore, uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の情報を取得できませんでした。"})
 		return
@@ -73,19 +74,19 @@ func (ph *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	var product models.Product
+	var product usecases.ProductInput
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "商品のデータの形式が正しくありません。"})
 		return
 	}
 
-	err = ph.productStore.UpdateProduct(uint(id), &product)
+	updatedProduct, err := usecases.UpdateProduct(ph.ProductStore, uint(id), product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の更新に失敗しました。"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": product})
+	c.JSON(http.StatusOK, gin.H{"data": updatedProduct})
 }
 
 // 指定されたIDの商品を削除
@@ -97,7 +98,7 @@ func (ph *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	err = ph.productStore.DeleteProduct(uint(id))
+	err = usecases.DeleteProduct(ph.ProductStore, uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の削除に失敗しました。"})
 		return

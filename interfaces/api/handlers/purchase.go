@@ -3,20 +3,20 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
+	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/eternaleight/go-backend/infra/stores"
+	"github.com/gin-gonic/gin"
 )
 
 // 購入関連のハンドラを管理
 type PurchaseHandler struct {
-	stores *stores.PurchaseStore
+	PurchaseStore stores.PurchaseStoreInterface
 }
 
 // 新しいPurchaseHandlerを初期化して返す
-func NewPurchaseHandler(s *stores.PurchaseStore) *PurchaseHandler {
-	return &PurchaseHandler{stores: s}
+func NewPurchaseHandler(store stores.PurchaseStoreInterface) *PurchaseHandler {
+	return &PurchaseHandler{PurchaseStore: store}
 }
 
 // 新しい購入を作成するためのハンドラ
@@ -30,7 +30,7 @@ func (ph *PurchaseHandler) CreatePurchase(c *gin.Context) {
 	}
 
 	// 購入データをデータベースに保存
-	err := ph.stores.CreatePurchase(&purchase)
+	err := usecases.CreatePurchase(ph.PurchaseStore, &purchase)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "データベースに購入情報を保存できなかった"})
 		return

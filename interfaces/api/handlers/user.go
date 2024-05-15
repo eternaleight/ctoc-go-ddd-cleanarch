@@ -3,22 +3,32 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
+	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/infra/stores"
+	"github.com/gin-gonic/gin"
 )
 
-// ユーザー情報を取得
-func (h *Handler) GetUser(c *gin.Context) {
+// UserHandlerはユーザー関連のハンドラを管理します
+type UserHandler struct {
+	UserStore stores.UserStoreInterface
+}
+
+// NewUserHandlerはUserHandlerの新しいインスタンスを初期化します
+func NewUserHandler(userStore stores.UserStoreInterface) *UserHandler {
+	return &UserHandler{
+		UserStore: userStore,
+	}
+}
+
+// GetUserはユーザー情報を取得します
+func (h *UserHandler) GetUser(c *gin.Context) {
 	// ミドルウェアからuserIDを取得
 	userID := c.MustGet("userID").(uint)
 
-	// UserStoreのインスタンスを生成
-	userStore := stores.NewUserStore(h.DB)
-	// データベースからユーザー情報を取得
-	user, err := userStore.GetUserByID(userID)
+	// ユースケースの呼び出し
+	user, err := usecases.GetUserByID(h.UserStore, userID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found or database error"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "ユーザーが見つからないか、データベースエラー"})
 		return
 	}
 
