@@ -7,17 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/eternaleight/go-backend/models"
-	"github.com/eternaleight/go-backend/store"
+	"github.com/eternaleight/go-backend/stores"
 )
 
-// 商品に関するリクエストを処理
 type ProductHandler struct {
-	store *store.ProductStore
+	productStore *stores.ProductStore
 }
 
-// 新しいProductHandlerを初期化して返す
-func NewProductHandler(s *store.ProductStore) *ProductHandler {
-	return &ProductHandler{store: s}
+func NewProductHandler(pStore *stores.ProductStore) *ProductHandler {
+	return &ProductHandler{
+		productStore: pStore,
+	}
 }
 
 // 新しい商品を作成
@@ -28,7 +28,7 @@ func (ph *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	err := ph.store.CreateProduct(&product)
+	err := ph.productStore.CreateProduct(&product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "データベースに商品を保存できませんでした。"})
 		return
@@ -39,7 +39,7 @@ func (ph *ProductHandler) CreateProduct(c *gin.Context) {
 
 // 全商品をリストとして取得
 func (ph *ProductHandler) ListProducts(c *gin.Context) {
-	products, err := ph.store.ListProducts()
+	products, err := ph.productStore.ListProducts()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品のリストの取得に失敗しました。"})
 		return
@@ -56,7 +56,7 @@ func (ph *ProductHandler) GetProductByID(c *gin.Context) {
 		return
 	}
 
-	product, err := ph.store.GetProductByID(uint(id))
+	product, err := ph.productStore.GetProductByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の情報を取得できませんでした。"})
 		return
@@ -79,7 +79,7 @@ func (ph *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	err = ph.store.UpdateProduct(uint(id), &product)
+	err = ph.productStore.UpdateProduct(uint(id), &product)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の更新に失敗しました。"})
 		return
@@ -97,7 +97,7 @@ func (ph *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	err = ph.store.DeleteProduct(uint(id))
+	err = ph.productStore.DeleteProduct(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "商品の削除に失敗しました。"})
 		return

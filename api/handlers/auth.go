@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/eternaleight/go-backend/store"
+	"github.com/eternaleight/go-backend/stores"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -43,7 +43,7 @@ func (h *Handler) Register(c *gin.Context) {
 	}
 
 	// AuthStoreのインスタンスを生成
-	authStore := store.NewAuthStore(h.DB)
+	authStore := stores.NewAuthStore(h.DB)
 
 	// emailを使ってemailMd5Hashの作成
 	emailMd5Hash := fmt.Sprintf("%x", md5.Sum([]byte(input.Email)))
@@ -85,7 +85,7 @@ func (h *Handler) Login(c *gin.Context) {
 	}
 
 	// AuthStoreのインスタンスを生成
-	authStore := store.NewAuthStore(h.DB)
+	authStore := stores.NewAuthStore(h.DB)
 
 	// メールアドレスを使ってユーザーを取得
 	user, err := authStore.GetUserByEmail(input.Email)

@@ -1,4 +1,4 @@
-# Go-platform
+# go-pack
 
 ![CleanShot 2023-08-15 at 04 16 56@2x](https://github.com/eternaleight/go-platform/assets/96198088/ab862886-94d2-49f6-8b6d-6e15055064fd)
 
@@ -37,7 +37,7 @@
 ├── main.go                        // アプリケーションの開始点。サーバの設定や初期化を含む
 ├── models                         // データベースのテーブルと一致するGoの構造体
 │   └── models.go                  // User, Postなどのデータ構造の定義
-└── store                          // データベースとのやり取りを行う関数
+└── stores                          // データベースとのやり取りを行う関数
     ├── auth_store.go              // ユーザーの認証や登録のデータベース処理
     ├── post_store.go              // 投稿の作成、取得、更新のデータベース処理
     ├── user_store.go              // ユーザー情報の取得、更新のデータベース処理

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/eternaleight/go-backend/store"
+	"github.com/eternaleight/go-backend/stores"
 )
 
 // ユーザー情報を取得
@@ -14,7 +14,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	// UserStoreのインスタンスを生成
-	userStore := store.NewUserStore(h.DB)
+	userStore := stores.NewUserStore(h.DB)
 	// データベースからユーザー情報を取得
 	user, err := userStore.GetUserByID(userID)
 	if err != nil {

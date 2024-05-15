@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/eternaleight/go-backend/models"
-	"github.com/eternaleight/go-backend/store"
+	"github.com/eternaleight/go-backend/stores"
 )
 
 // 新しい投稿を作成する
@@ -42,7 +42,7 @@ func (h *Handler) CreatePost(c *gin.Context) {
 	}
 
 	// PostStoreのインスタンスを生成
-	postStore := store.NewPostStore(h.DB)
+	postStore := stores.NewPostStore(h.DB)
 	post := models.Post{
 		Content:  input.Content,
 		AuthorID: userID,
@@ -61,7 +61,7 @@ func (h *Handler) GetLatestPosts(c *gin.Context) {
 	var posts []models.Post
 
 	// PostStoreのインスタンスを生成
-	postStore := store.NewPostStore(h.DB)
+	postStore := stores.NewPostStore(h.DB)
 
 	// 最新の投稿をデータベースから取得
 	posts, err := postStore.GetLatestPosts()

@@ -1,4 +1,4 @@
-package store
+package stores
 
 import (
 	"github.com/eternaleight/go-backend/models"
