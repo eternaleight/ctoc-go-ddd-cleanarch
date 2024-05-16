@@ -1,4 +1,4 @@
-# go-ddd-cleanarch
+# Go-DDD-CleanArchitecture
 
 
 ### Project structure
