@@ -1,20 +1,14 @@
 package usecases
 
 import (
-	"crypto/md5"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/eternaleight/go-backend/domain/models"
+	"github.com/eternaleight/go-backend/domain/rules"
 	"github.com/eternaleight/go-backend/infra/stores"
 )
-
-func getGravatarURL(email string, size int) string {
-	emailHash := fmt.Sprintf("%x", md5.Sum([]byte(strings.ToLower(strings.TrimSpace(email)))))
-	return fmt.Sprintf("https://www.gravatar.com/avatar/%s?s=%d&d=identicon", emailHash, size)
-}
 
 func RegisterUser(store stores.AuthStoreInterface, username, email, password string) (*models.User, string, string, string, error) {
 	// Register the user
@@ -23,8 +17,9 @@ func RegisterUser(store stores.AuthStoreInterface, username, email, password str
 		return nil, "", "", "", err
 	}
 
-	emailMd5Hash := fmt.Sprintf("%x", md5.Sum([]byte(email)))
-	gravatarURL := getGravatarURL(email, 800)
+	emailMd5Hash := fmt.Sprintf("%x", rules.GetGravatarURL(email, 800))
+
+	gravatarURL := rules.GetGravatarURL(email, 800)
 
 	// Generate JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -46,7 +41,7 @@ func LoginUser(store stores.AuthStoreInterface, email, password string) (string,
 	}
 
 	// Compare password
-	err = store.ComparePassword(user.Password, password)
+	err = rules.ComparePassword(user.Password, password)
 	if err != nil {
 		return "", "", err
 	}
@@ -60,6 +55,6 @@ func LoginUser(store stores.AuthStoreInterface, email, password string) (string,
 		return "", "", err
 	}
 
-	gravatarURL := getGravatarURL(email, 800)
+	gravatarURL := rules.GetGravatarURL(email, 800)
 	return gravatarURL, tokenString, nil
 }

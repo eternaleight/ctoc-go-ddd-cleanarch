@@ -10,7 +10,6 @@ import (
 type AuthStoreInterface interface {
 	RegisterUser(username, email, password string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
-	ComparePassword(hashedPassword, password string) error
 }
 
 // AuthStore manages database operations related to authentication
@@ -46,9 +45,4 @@ func (s *AuthStore) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := s.DB.Where("email = ?", email).First(&user).Error
 	return &user, err
-}
-
-// ComparePassword compares hashed password with plain text password
-func (s *AuthStore) ComparePassword(hashedPassword, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }

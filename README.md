@@ -1,4 +1,4 @@
-# my-go-ddd-cleanarch
+# go-ddd-cleanarch
 
 
 ### Project structure

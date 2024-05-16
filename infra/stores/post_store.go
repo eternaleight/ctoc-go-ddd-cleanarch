@@ -30,7 +30,7 @@ func (s *PostStore) CreatePost(post *models.Post) error {
 func (s *PostStore) GetLatestPosts() ([]models.Post, error) {
 	var posts []models.Post
 	// 投稿日時の降順に10件の投稿を取得し、それらの投稿者も同時に取得します
-	if err := s.DB.Order("created_at desc").Limit(10).Preload("Author").Find(&posts).Error; err != nil {
+	if err := s.DB.Order("\"createdAt\" desc").Limit(10).Preload("Author").Find(&posts).Error; err != nil {
 		return nil, err
 	}
 	return posts, nil
