@@ -27,10 +27,10 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	}
 	config.AllowOrigins = []string{allowedOrigins} // フロントエンドのオリジンに合わせて変更
 
-	r.Use(cors.New(config))
-
 	// 'Authorization'ヘッダーを許可するためにヘッダーを追加
 	config.AllowHeaders = append(config.AllowHeaders, "Authorization")
+
+	r.Use(cors.New(config))
 
 	// ストアのインスタンスを作成
 	authStore := stores.NewAuthStore(db)
