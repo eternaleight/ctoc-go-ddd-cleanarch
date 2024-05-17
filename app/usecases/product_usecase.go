@@ -11,14 +11,33 @@ type ProductInput struct {
 	Price       int    `json:"price"`
 }
 
-func CreateProduct(store stores.ProductStoreInterface, input ProductInput) (*models.Product, error) {
+type ProductUsecasesInterface interface {
+	CreateProduct(input ProductInput) (*models.Product, error)
+	ListProducts() ([]models.Product, error)
+	GetProductByID(id uint) (*models.Product, error)
+	UpdateProduct(id uint, input ProductInput) (*models.Product, error)
+	DeleteProduct(id uint) error
+}
+
+type ProductUsecases struct {
+	ProductStore stores.ProductStoreInterface
+}
+
+// NewProductUsecasesはProductUsecasesの新しいインスタンスを初期化します
+func NewProductUsecases(productStore stores.ProductStoreInterface) *ProductUsecases {
+	return &ProductUsecases{
+		ProductStore: productStore,
+	}
+}
+
+func (u *ProductUsecases) CreateProduct(input ProductInput) (*models.Product, error) {
 	product := models.Product{
 		Name:        input.Name,
 		Description: input.Description,
 		Price:       input.Price,
 	}
 
-	err := store.CreateProduct(&product)
+	err := u.ProductStore.CreateProduct(&product)
 	if err != nil {
 		return nil, err
 	}
@@ -26,30 +45,30 @@ func CreateProduct(store stores.ProductStoreInterface, input ProductInput) (*mod
 	return &product, nil
 }
 
-func ListProducts(store stores.ProductStoreInterface) ([]models.Product, error) {
-	products, err := store.ListProducts()
+func (u *ProductUsecases) ListProducts() ([]models.Product, error) {
+	products, err := u.ProductStore.ListProducts()
 	if err != nil {
 		return nil, err
 	}
 	return products, nil
 }
 
-func GetProductByID(store stores.ProductStoreInterface, id uint) (*models.Product, error) {
-	product, err := store.GetProductByID(id)
+func (u *ProductUsecases) GetProductByID(id uint) (*models.Product, error) {
+	product, err := u.ProductStore.GetProductByID(id)
 	if err != nil {
 		return nil, err
 	}
 	return product, nil
 }
 
-func UpdateProduct(store stores.ProductStoreInterface, id uint, input ProductInput) (*models.Product, error) {
+func (u *ProductUsecases) UpdateProduct(id uint, input ProductInput) (*models.Product, error) {
 	product := models.Product{
 		Name:        input.Name,
 		Description: input.Description,
 		Price:       input.Price,
 	}
 
-	err := store.UpdateProduct(id, &product)
+	err := u.ProductStore.UpdateProduct(id, &product)
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +76,8 @@ func UpdateProduct(store stores.ProductStoreInterface, id uint, input ProductInp
 	return &product, nil
 }
 
-func DeleteProduct(store stores.ProductStoreInterface, id uint) error {
-	err := store.DeleteProduct(id)
+func (u *ProductUsecases) DeleteProduct(id uint) error {
+	err := u.ProductStore.DeleteProduct(id)
 	if err != nil {
 		return err
 	}

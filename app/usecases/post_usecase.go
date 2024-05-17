@@ -7,7 +7,23 @@ import (
 	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-func CreatePost(store stores.PostStoreInterface, content string, userID uint) (*models.Post, error) {
+type PostUsecasesInterface interface {
+	CreatePost(content string, userID uint) (*models.Post, error)
+	GetLatestPosts() ([]models.Post, error)
+}
+
+type PostUsecases struct {
+	PostStore stores.PostStoreInterface
+}
+
+// NewPostUsecasesはPostUsecasesの新しいインスタンスを初期化します
+func NewPostUsecases(postStore stores.PostStoreInterface) *PostUsecases {
+	return &PostUsecases{
+		PostStore: postStore,
+	}
+}
+
+func (u *PostUsecases) CreatePost(content string, userID uint) (*models.Post, error) {
 	// 投稿内容が空の場合のエラーチェック
 	if content == "" {
 		return nil, fmt.Errorf("投稿内容がありません")
@@ -18,15 +34,15 @@ func CreatePost(store stores.PostStoreInterface, content string, userID uint) (*
 		AuthorID: userID,
 	}
 
-	if err := store.CreatePost(&post); err != nil {
+	if err := u.PostStore.CreatePost(&post); err != nil {
 		return nil, fmt.Errorf("サーバーエラーです。")
 	}
 
 	return &post, nil
 }
 
-func GetLatestPosts(store stores.PostStoreInterface) ([]models.Post, error) {
-	posts, err := store.GetLatestPosts()
+func (u *PostUsecases) GetLatestPosts() ([]models.Post, error) {
+	posts, err := u.PostStore.GetLatestPosts()
 	if err != nil {
 		return nil, fmt.Errorf("サーバーエラーです。")
 	}

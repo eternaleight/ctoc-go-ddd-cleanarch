@@ -1,4 +1,3 @@
-// handlers/auth.go
 package handlers
 
 import (
@@ -10,13 +9,13 @@ import (
 )
 
 type AuthHandler struct {
-	AuthStore stores.AuthStoreInterface
+	AuthUsecases usecases.AuthUsecasesInterface
 }
 
 // NewAuthHandler initializes a new instance of AuthHandler
 func NewAuthHandler(authStore stores.AuthStoreInterface) *AuthHandler {
 	return &AuthHandler{
-		AuthStore: authStore,
+		AuthUsecases: usecases.NewAuthUsecases(authStore),
 	}
 }
 
@@ -35,7 +34,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// Call the usecase
-	user, emailMd5Hash, gravatarURL, tokenString, err := usecases.RegisterUser(h.AuthStore, input.Username, input.Email, input.Password)
+	user, emailMd5Hash, gravatarURL, tokenString, err := h.AuthUsecases.RegisterUser(input.Username, input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -61,7 +60,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// Call the usecase
-	gravatarURL, tokenString, err := usecases.LoginUser(h.AuthStore, input.Email, input.Password)
+	gravatarURL, tokenString, err := h.AuthUsecases.LoginUser(input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

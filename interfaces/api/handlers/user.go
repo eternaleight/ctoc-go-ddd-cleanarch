@@ -10,13 +10,13 @@ import (
 
 // UserHandlerはユーザー関連のハンドラを管理します
 type UserHandler struct {
-	UserStore stores.UserStoreInterface
+	UserUsecases usecases.UserUsecasesInterface
 }
 
 // NewUserHandlerはUserHandlerの新しいインスタンスを初期化します
 func NewUserHandler(userStore stores.UserStoreInterface) *UserHandler {
 	return &UserHandler{
-		UserStore: userStore,
+		UserUsecases: usecases.NewUserUsecases(userStore),
 	}
 }
 
@@ -26,7 +26,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	// ユースケースの呼び出し
-	user, err := usecases.GetUserByID(h.UserStore, userID)
+	user, err := h.UserUsecases.GetUserByID(userID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "ユーザーが見つからないか、データベースエラー"})
 		return

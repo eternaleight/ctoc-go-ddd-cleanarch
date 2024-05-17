@@ -9,13 +9,13 @@ import (
 )
 
 type PostHandler struct {
-	PostStore stores.PostStoreInterface
+	PostUsecases usecases.PostUsecasesInterface
 }
 
 // NewPostHandlerはPostHandlerの新しいインスタンスを初期化します
 func NewPostHandler(postStore stores.PostStoreInterface) *PostHandler {
 	return &PostHandler{
-		PostStore: postStore,
+		PostUsecases: usecases.NewPostUsecases(postStore),
 	}
 }
 
@@ -46,7 +46,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	// ユースケースを呼び出します
-	post, err := usecases.CreatePost(h.PostStore, input.Content, userID)
+	post, err := h.PostUsecases.CreatePost(input.Content, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -58,7 +58,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 // GetLatestPostsは最新の投稿を取得します
 func (h *PostHandler) GetLatestPosts(c *gin.Context) {
 	// ユースケースを呼び出します
-	posts, err := usecases.GetLatestPosts(h.PostStore)
+	posts, err := h.PostUsecases.GetLatestPosts()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "サーバーエラーです。"})
 		return

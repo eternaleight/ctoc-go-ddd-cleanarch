@@ -5,9 +5,24 @@ import (
 	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-func GetUserByID(store stores.UserStoreInterface, userID uint) (*models.User, error) {
+type UserUsecasesInterface interface {
+	GetUserByID(userID uint) (*models.User, error)
+}
+
+type UserUsecases struct {
+	UserStore stores.UserStoreInterface
+}
+
+// NewUserUsecasesはUserUsecasesの新しいインスタンスを初期化します
+func NewUserUsecases(userStore stores.UserStoreInterface) *UserUsecases {
+	return &UserUsecases{
+		UserStore: userStore,
+	}
+}
+
+func (u *UserUsecases) GetUserByID(userID uint) (*models.User, error) {
 	// 指定されたIDのユーザー情報を取得
-	user, err := store.GetUserByID(userID)
+	user, err := u.UserStore.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}

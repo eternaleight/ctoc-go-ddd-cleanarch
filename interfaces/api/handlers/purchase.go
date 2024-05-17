@@ -11,12 +11,14 @@ import (
 
 // 購入関連のハンドラを管理
 type PurchaseHandler struct {
-	PurchaseStore stores.PurchaseStoreInterface
+	PurchaseUsecases usecases.PurchaseUsecasesInterface
 }
 
 // 新しいPurchaseHandlerを初期化して返す
 func NewPurchaseHandler(store stores.PurchaseStoreInterface) *PurchaseHandler {
-	return &PurchaseHandler{PurchaseStore: store}
+	return &PurchaseHandler{
+		PurchaseUsecases: usecases.NewPurchaseUsecases(store),
+	}
 }
 
 // 新しい購入を作成するためのハンドラ
@@ -30,7 +32,7 @@ func (ph *PurchaseHandler) CreatePurchase(c *gin.Context) {
 	}
 
 	// 購入データをデータベースに保存
-	err := usecases.CreatePurchase(ph.PurchaseStore, &purchase)
+	err := ph.PurchaseUsecases.CreatePurchase(&purchase)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "データベースに購入情報を保存できなかった"})
 		return

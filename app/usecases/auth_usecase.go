@@ -10,9 +10,25 @@ import (
 	"github.com/eternaleight/go-backend/utils"
 )
 
-func RegisterUser(store stores.AuthStoreInterface, username, email, password string) (*models.User, string, string, string, error) {
+type AuthUsecasesInterface interface {
+	RegisterUser(username, email, password string) (*models.User, string, string, string, error)
+	LoginUser(email, password string) (string, string, error)
+}
+
+type AuthUsecases struct {
+	AuthStore stores.AuthStoreInterface
+}
+
+// NewPostUsecasesはPostUsecasesの新しいインスタンスを初期化します
+func NewAuthUsecases(authStore stores.AuthStoreInterface) *AuthUsecases {
+	return &AuthUsecases{
+		AuthStore: authStore,
+	}
+}
+
+func (u AuthUsecases) RegisterUser(username, email, password string) (*models.User, string, string, string, error) {
 	// Register the user
-	user, err := store.RegisterUser(username, email, password)
+	user, err := u.AuthStore.RegisterUser(username, email, password)
 	if err != nil {
 		return nil, "", "", "", err
 	}
@@ -33,9 +49,9 @@ func RegisterUser(store stores.AuthStoreInterface, username, email, password str
 	return user, emailMd5Hash, gravatarURL, tokenString, nil
 }
 
-func LoginUser(store stores.AuthStoreInterface, email, password string) (string, string, error) {
+func (u AuthUsecases) LoginUser(email, password string) (string, string, error) {
 	// Retrieve user by email
-	user, err := store.GetUserByEmail(email)
+	user, err := u.AuthStore.GetUserByEmail(email)
 	if err != nil {
 		return "", "", err
 	}
