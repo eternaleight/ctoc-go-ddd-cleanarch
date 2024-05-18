@@ -3,6 +3,7 @@ package interfaces
 import (
 	"os"
 
+	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/eternaleight/go-backend/interfaces/api/handlers"
 	"github.com/eternaleight/go-backend/interfaces/api/middlewares"
@@ -39,12 +40,19 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	userStore := stores.NewUserStore(db)
 	postStore := stores.NewPostStore(db)
 
+	// ユースケースのインスタンスを作成
+	authUsecases := usecases.NewAuthUsecases(authStore)
+	productUsecases := usecases.NewProductUsecases(productStore)
+	purchaseUsecases := usecases.NewPurchaseUsecases(purchaseStore)
+	userUsecases := usecases.NewUserUsecases(userStore)
+	postUsecases := usecases.NewPostUsecases(postStore)
+
 	// ハンドラのインスタンスを作成
-	authHandler := handlers.NewAuthHandler(authStore)
-	productHandler := handlers.NewProductHandler(productStore)
-	purchaseHandler := handlers.NewPurchaseHandler(purchaseStore)
-	userHandler := handlers.NewUserHandler(userStore)
-	postHandler := handlers.NewPostHandler(postStore)
+	authHandler := handlers.NewAuthHandler(authUsecases)
+	productHandler := handlers.NewProductHandler(productUsecases)
+	purchaseHandler := handlers.NewPurchaseHandler(purchaseUsecases)
+	userHandler := handlers.NewUserHandler(userUsecases)
+	postHandler := handlers.NewPostHandler(postUsecases)
 
 	// auth
 	auth := r.Group("/api/auth")

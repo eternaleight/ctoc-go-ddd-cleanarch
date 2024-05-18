@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/eternaleight/go-backend/app/usecases"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,9 +13,9 @@ type PostHandler struct {
 }
 
 // 新しいPostHandlerのインスタンスを初期化します
-func NewPostHandler(postStore stores.PostStoreInterface) *PostHandler {
+func NewPostHandler(postUsecases usecases.PostUsecasesInterface) *PostHandler {
 	return &PostHandler{
-		PostUsecases: usecases.NewPostUsecases(postStore),
+		PostUsecases: postUsecases,
 	}
 }
 

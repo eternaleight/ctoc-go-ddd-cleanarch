@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/eternaleight/go-backend/app/usecases"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,9 +13,9 @@ type ProductHandler struct {
 }
 
 // 新しいProductHandlerのインスタンスを初期化
-func NewProductHandler(productStore stores.ProductStoreInterface) *ProductHandler {
+func NewProductHandler(productUsecases usecases.ProductUsecasesInterface) *ProductHandler {
 	return &ProductHandler{
-		ProductUsecases: usecases.NewProductUsecases(productStore),
+		ProductUsecases: productUsecases,
 	}
 }
 

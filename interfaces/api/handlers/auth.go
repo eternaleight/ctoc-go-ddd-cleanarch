@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/eternaleight/go-backend/app/usecases"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,9 +13,9 @@ type AuthHandler struct {
 }
 
 // 新しいAuthHandlerのインスタンスを初期化します
-func NewAuthHandler(authStore stores.AuthStoreInterface) *AuthHandler {
+func NewAuthHandler(authUsecases usecases.AuthUsecasesInterface) *AuthHandler {
 	return &AuthHandler{
-		AuthUsecases: usecases.NewAuthUsecases(authStore),
+		AuthUsecases: authUsecases,
 	}
 }
 

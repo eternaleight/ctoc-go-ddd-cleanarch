@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/eternaleight/go-backend/app/usecases"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,9 +13,9 @@ type UserHandler struct {
 }
 
 // UserHandlerの新しいインスタンスを初期化します
-func NewUserHandler(userStore stores.UserStoreInterface) *UserHandler {
+func NewUserHandler(userUsecases usecases.UserUsecasesInterface) *UserHandler {
 	return &UserHandler{
-		UserUsecases: usecases.NewUserUsecases(userStore),
+		UserUsecases: userUsecases,
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,9 +14,9 @@ type PurchaseHandler struct {
 }
 
 // 新しいPurchaseHandlerを初期化して返す
-func NewPurchaseHandler(store stores.PurchaseStoreInterface) *PurchaseHandler {
+func NewPurchaseHandler(purchaseUsecases usecases.PurchaseUsecasesInterface) *PurchaseHandler {
 	return &PurchaseHandler{
-		PurchaseUsecases: usecases.NewPurchaseUsecases(store),
+		PurchaseUsecases: purchaseUsecases,
 	}
 }
 
