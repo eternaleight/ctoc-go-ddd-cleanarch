@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/eternaleight/go-backend/app/dtos"
 	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/gin-gonic/gin"
 )
@@ -21,11 +22,7 @@ func NewAuthHandler(authUsecases usecases.AuthUsecasesInterface) *AuthHandler {
 
 // 新しいユーザーを登録します
 func (h *AuthHandler) Register(c *gin.Context) {
-	var input struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input dtos.RegisterRequest
 
 	// リクエストからJSONデータをバインドします
 	if err := c.BindJSON(&input); err != nil {
@@ -43,15 +40,19 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	// JWTトークンをHTTPオンリークッキーとして設定（90日間の有効期限）
 	c.SetCookie("authToken", tokenString, 60*60*24*90, "/", "", false, true)
 
-	c.JSON(http.StatusOK, gin.H{"user": user, "emailMd5Hash": emailMd5Hash, "gravatarURL": gravatarURL})
+	response := dtos.AuthResponse{
+		User:         user,
+		EmailMd5Hash: emailMd5Hash,
+		GravatarURL:  gravatarURL,
+		Token:        tokenString,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // ユーザーのログインを処理します
 func (h *AuthHandler) Login(c *gin.Context) {
-	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input dtos.LoginRequest
 
 	// リクエストからJSONデータをバインドします
 	if err := c.BindJSON(&input); err != nil {
@@ -69,5 +70,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// JWTトークンをHTTPオンリークッキーとして設定（90日間の有効期限）
 	c.SetCookie("authToken", tokenString, 60*60*24*90, "/", "", false, true)
 
-	c.JSON(http.StatusOK, gin.H{"gravatarURL": gravatarURL})
+	response := dtos.AuthResponse{
+		GravatarURL: gravatarURL,
+		Token:       tokenString,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
