@@ -13,7 +13,7 @@ type UserUsecases struct {
 	UserStore stores.UserStoreInterface
 }
 
-// NewUserUsecasesはUserUsecasesの新しいインスタンスを初期化します
+// UserUsecasesの新しいインスタンスを初期化します
 func NewUserUsecases(userStore stores.UserStoreInterface) *UserUsecases {
 	return &UserUsecases{
 		UserStore: userStore,

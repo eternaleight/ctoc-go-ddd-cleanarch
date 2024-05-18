@@ -5,28 +5,29 @@ import (
 	"gorm.io/gorm"
 )
 
-// UserStoreInterface defines the interface for user store operations
+// ユーザーストア操作のインターフェースを定義します
 type UserStoreInterface interface {
 	CreateUser(user *models.User) error
 	GetUserByID(id uint) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
 }
 
+// ユーザーに関するデータベース操作を管理します
 type UserStore struct {
 	DB *gorm.DB
 }
 
-// 新しいUserStoreを生成
+// 新しいUserStoreのインスタンスを生成します
 func NewUserStore(db *gorm.DB) *UserStore {
 	return &UserStore{DB: db}
 }
 
-// ユーザーをデータベースに保存
+// ユーザーをデータベースに保存します
 func (s *UserStore) CreateUser(user *models.User) error {
 	return s.DB.Create(user).Error
 }
 
-// IDに基づいてユーザー情報を取得
+// IDに基づいてユーザー情報を取得します
 func (s *UserStore) GetUserByID(id uint) (*models.User, error) {
 	var user models.User
 	if err := s.DB.Where("id = ?", id).First(&user).Error; err != nil {
@@ -35,7 +36,7 @@ func (s *UserStore) GetUserByID(id uint) (*models.User, error) {
 	return &user, nil
 }
 
-// メールアドレスに基づいてユーザー情報を取得
+// メールアドレスに基づいてユーザー情報を取得します
 func (s *UserStore) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	if err := s.DB.Where("email = ?", email).First(&user).Error; err != nil {

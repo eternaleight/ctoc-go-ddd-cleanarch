@@ -6,31 +6,31 @@ import (
 	"gorm.io/gorm"
 )
 
-// AuthStoreInterface defines the interface for authentication store operations
+// 認証ストア操作のインターフェースを定義します
 type AuthStoreInterface interface {
 	RegisterUser(username, email, password string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
 }
 
-// AuthStore manages database operations related to authentication
+// 認証に関連するデータベース操作を管理します
 type AuthStore struct {
 	DB *gorm.DB
 }
 
-// NewAuthStore creates a new instance of AuthStore
+// 新しいAuthStoreのインスタンスを作成します
 func NewAuthStore(db *gorm.DB) *AuthStore {
 	return &AuthStore{DB: db}
 }
 
-// RegisterUser registers a new user in the database
+// データベースに新しいユーザーを登録します
 func (s *AuthStore) RegisterUser(username, email, password string) (*models.User, error) {
-	// Hash the password
+	// パスワードをハッシュ化
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return nil, err
 	}
 
-	// Save the user information in the database
+	// ユーザー情報をデータベースに保存
 	user := &models.User{
 		Username: username,
 		Email:    email,
@@ -40,7 +40,7 @@ func (s *AuthStore) RegisterUser(username, email, password string) (*models.User
 	return user, result.Error
 }
 
-// GetUserByEmail retrieves user information based on email
+// メールアドレスに基づいてユーザー情報を取得します
 func (s *AuthStore) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := s.DB.Where("email = ?", email).First(&user).Error

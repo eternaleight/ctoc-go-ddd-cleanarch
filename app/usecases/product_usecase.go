@@ -23,7 +23,7 @@ type ProductUsecases struct {
 	ProductStore stores.ProductStoreInterface
 }
 
-// NewProductUsecasesはProductUsecasesの新しいインスタンスを初期化します
+// ProductUsecasesの新しいインスタンスを初期化します
 func NewProductUsecases(productStore stores.ProductStoreInterface) *ProductUsecases {
 	return &ProductUsecases{
 		ProductStore: productStore,

@@ -8,18 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 投稿関連のリクエストを処理します
 type PostHandler struct {
 	PostUsecases usecases.PostUsecasesInterface
 }
 
-// NewPostHandlerはPostHandlerの新しいインスタンスを初期化します
+// 新しいPostHandlerのインスタンスを初期化します
 func NewPostHandler(postStore stores.PostStoreInterface) *PostHandler {
 	return &PostHandler{
 		PostUsecases: usecases.NewPostUsecases(postStore),
 	}
 }
 
-// CreatePostは新しい投稿を作成します
+// 新しい投稿を作成します
 func (h *PostHandler) CreatePost(c *gin.Context) {
 	var input struct {
 		Content string `json:"content"`
@@ -55,7 +56,7 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"post": post})
 }
 
-// GetLatestPostsは最新の投稿を取得します
+// 最新の投稿を取得します
 func (h *PostHandler) GetLatestPosts(c *gin.Context) {
 	// ユースケースを呼び出します
 	posts, err := h.PostUsecases.GetLatestPosts()

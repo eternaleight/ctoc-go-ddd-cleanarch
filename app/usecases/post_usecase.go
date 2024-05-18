@@ -16,7 +16,7 @@ type PostUsecases struct {
 	PostStore stores.PostStoreInterface
 }
 
-// NewPostUsecasesはPostUsecasesの新しいインスタンスを初期化します
+// PostUsecasesの新しいインスタンスを初期化します
 func NewPostUsecases(postStore stores.PostStoreInterface) *PostUsecases {
 	return &PostUsecases{
 		PostStore: postStore,
