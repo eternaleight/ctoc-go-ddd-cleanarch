@@ -2,17 +2,6 @@ package models
 
 import "time"
 
-type Post struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	Content   string    `gorm:"column:content" json:"content"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP;column:createdAt" json:"createdAt"`
-	AuthorID  uint      `gorm:"column:authorId;index" json:"authorId"`
-}
-
-func (Post) TableName() string {
-	return "Post"
-}
-
 type User struct {
 	ID           uint          `gorm:"primaryKey" json:"id"`
 	Username     string        `gorm:"column:username" json:"username"`
@@ -40,36 +29,6 @@ type Profile struct {
 
 func (Profile) TableName() string {
 	return "Profile"
-}
-
-type Product struct {
-	ID          uint       `gorm:"primaryKey;column:id" json:"id"`
-	Name        string     `gorm:"column:name" json:"name"`
-	Description string     `gorm:"column:description" json:"description"`
-	Price       int        `gorm:"column:price" json:"price"`
-	ImageURL    string     `gorm:"column:imageUrl" json:"imageUrl"`
-	ImageSize   uint64     `gorm:"column:imageSize" json:"imageSize"`
-	VideoURL    string     `gorm:"column:videoUrl" json:"videoUrl"`
-	CreatedAt   time.Time  `gorm:"column:createdAt" json:"createdAt"`
-	SellerID    uint       `gorm:"column:sellerId;index" json:"sellerId"`
-	Purchases   []Purchase `gorm:"foreignKey:ProductID" json:"purchases"`
-}
-
-func (Product) TableName() string {
-	return "Product"
-}
-
-type Purchase struct {
-	ID              uint      `gorm:"primaryKey;column:id" json:"id"`
-	Price           int       `gorm:"column:price" json:"price"`
-	ProductID       uint      `gorm:"column:productId;index" json:"productId"`
-	BuyerID         uint      `gorm:"column:buyerId;index" json:"buyerId"`
-	PurchaseDate    time.Time `gorm:"column:purchaseDate" json:"purchaseDate"`
-	StripePaymentID string    `gorm:"column:stripePaymentId" json:"stripePaymentId"`
-}
-
-func (Purchase) TableName() string {
-	return "Purchase"
 }
 
 type Image struct {
