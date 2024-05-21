@@ -31,21 +31,22 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// ユースケースを呼び出します
-	user, emailMd5Hash, gravatarURL, tokenString, err := h.AuthUsecases.RegisterUser(input.Username, input.Email, input.Password)
+	user, emailMd5Hash, gravatarURL, accessTokenString, refreshTokenString, err := h.AuthUsecases.RegisterUser(input.Username, input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// JWTトークンをHTTPオンリークッキーとして設定（90日間の有効期限）
-	c.SetCookie("authToken", tokenString, 60*60*24*90, "/", "", false, true)
-
 	response := dtos.AuthResponse{
 		User:         user,
 		EmailMd5Hash: emailMd5Hash,
 		GravatarURL:  gravatarURL,
-		Token:        tokenString,
+		Token:        accessTokenString,
 	}
+
+	// アクセストークンとリフレッシュトークンをヘッダーに設定
+	c.Header("Authorization", "Bearer "+accessTokenString)
+	c.Header("Refresh-Token", refreshTokenString)
 
 	c.JSON(http.StatusOK, response)
 }
@@ -61,19 +62,41 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// ユースケースを呼び出します
-	gravatarURL, tokenString, err := h.AuthUsecases.LoginUser(input.Email, input.Password)
+	gravatarURL, accessTokenString, refreshTokenString, err := h.AuthUsecases.LoginUser(input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// JWTトークンをHTTPオンリークッキーとして設定（90日間の有効期限）
-	c.SetCookie("authToken", tokenString, 60*60*24*90, "/", "", false, true)
-
 	response := dtos.AuthResponse{
 		GravatarURL: gravatarURL,
-		Token:       tokenString,
+		Token:       accessTokenString,
 	}
 
+	// アクセストークンとリフレッシュトークンをヘッダーに設定
+	c.Header("Authorization", "Bearer "+accessTokenString)
+	c.Header("Refresh-Token", refreshTokenString)
+
 	c.JSON(http.StatusOK, response)
+}
+
+// リフレッシュトークンを使用してアクセストークンをリフレッシュします
+func (h *AuthHandler) Refresh(c *gin.Context) {
+	refreshTokenString := c.GetHeader("Refresh-Token")
+	if refreshTokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token is required"})
+		return
+	}
+
+	accessTokenString, newRefreshTokenString, err := h.AuthUsecases.RefreshToken(refreshTokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 新しいアクセストークンとリフレッシュトークンをヘッダーに設定
+	c.Header("Authorization", "Bearer "+accessTokenString)
+	c.Header("Refresh-Token", newRefreshTokenString)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Token refreshed successfully"})
 }
