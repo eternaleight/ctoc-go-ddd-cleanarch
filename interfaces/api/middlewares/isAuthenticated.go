@@ -6,24 +6,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func IsAuthenticated() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// クッキーからauthTokenを取得
-		tokenString, err := c.Cookie("authToken")
-
-		// エラーメッセージをまとめる関数
-		unauthorized := func() {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "権限がありません。"})
+		// Authorizationヘッダーからトークンを取得
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
 			c.Abort()
-		}
-
-		if err != nil {
-			unauthorized()
 			return
 		}
 
+		// Bearerトークンを取り出す
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Bearer token is required"})
+			c.Abort()
+			return
+		}
+
+		// JWTトークンを解析
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -32,11 +36,13 @@ func IsAuthenticated() gin.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
-			unauthorized()
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
 			return
 		}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		// トークンのクレームからユーザーIDを取得
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			if idFloat, ok := claims["id"].(float64); ok {
 				userId := uint(idFloat)
 				c.Set("userID", userId)
@@ -47,6 +53,7 @@ func IsAuthenticated() gin.HandlerFunc {
 		}
 
 		// 何らかの理由で認証が失敗した場合
-		unauthorized()
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		c.Abort()
 	}
 }
