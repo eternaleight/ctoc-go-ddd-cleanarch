@@ -42,27 +42,13 @@ func (u AuthUsecases) RegisterUser(username, email, password string) (*models.Us
 	emailMd5Hash := fmt.Sprintf("%x", utils.GetGravatarURL(email, 800))
 	gravatarURL := utils.GetGravatarURL(email, 800)
 
-	// アクセストークンを生成
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Minute * 30).Unix(), // 30分の有効期限
-	})
-	accessTokenString, err := accessToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	// アクセストークンとリフレッシュトークンを生成
+	accessToken, refreshToken, err := generateTokens(user.ID)
 	if err != nil {
 		return nil, "", "", "", "", err
 	}
 
-	// リフレッシュトークンを生成
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Hour * 24 * 90).Unix(), // 90日の有効期限
-	})
-	refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
-	if err != nil {
-		return nil, "", "", "", "", err
-	}
-
-	return user, emailMd5Hash, gravatarURL, accessTokenString, refreshTokenString, nil
+	return user, emailMd5Hash, gravatarURL, accessToken, refreshToken, nil
 }
 
 // LoginUserはユーザーのログインを処理します
@@ -79,28 +65,14 @@ func (u AuthUsecases) LoginUser(email, password string) (string, string, string,
 		return "", "", "", err
 	}
 
-	// アクセストークンを生成
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Minute * 30).Unix(), // 30分の有効期限
-	})
-	accessTokenString, err := accessToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
-	if err != nil {
-		return "", "", "", err
-	}
-
-	// リフレッシュトークンを生成
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Hour * 24 * 90).Unix(), // 90日の有効期限
-	})
-	refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	// アクセストークンとリフレッシュトークンを生成
+	accessToken, refreshToken, err := generateTokens(user.ID)
 	if err != nil {
 		return "", "", "", err
 	}
 
 	gravatarURL := utils.GetGravatarURL(email, 800)
-	return gravatarURL, accessTokenString, refreshTokenString, nil
+	return gravatarURL, accessToken, refreshToken, nil
 }
 
 // RefreshTokenはリフレッシュトークンを使用して新しいアクセストークンを発行します
@@ -121,29 +93,40 @@ func (u AuthUsecases) RefreshToken(refreshTokenString string) (string, string, e
 		if idFloat, ok := claims["id"].(float64); ok {
 			userId := uint(idFloat)
 
-			// 新しいアクセストークンを生成
-			accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-				"id":  userId,
-				"exp": time.Now().Add(time.Minute * 30).Unix(), // 30分の有効期限
-			})
-			accessTokenString, err := accessToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
+			// 新しいアクセストークンとリフレッシュトークンを生成
+			accessToken, refreshToken, err := generateTokens(userId)
 			if err != nil {
 				return "", "", err
 			}
 
-			// 新しいリフレッシュトークンを生成
-			refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-				"id":  userId,
-				"exp": time.Now().Add(time.Hour * 24 * 90).Unix(), // 90日の有効期限
-			})
-			refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
-			if err != nil {
-				return "", "", err
-			}
-
-			return accessTokenString, refreshTokenString, nil
+			return accessToken, refreshToken, nil
 		}
 	}
 
 	return "", "", fmt.Errorf("invalid refresh token claims")
+}
+
+// トークンを生成するヘルパー関数
+func generateTokens(userID uint) (string, string, error) {
+	// アクセストークンを生成
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  userID,
+		"exp": time.Now().Add(time.Minute * 30).Unix(), // 30分の有効期限
+	})
+	accessTokenString, err := accessToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	if err != nil {
+		return "", "", err
+	}
+
+	// リフレッシュトークンを生成
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  userID,
+		"exp": time.Now().Add(time.Hour * 24 * 90).Unix(), // 90日の有効期限
+	})
+	refreshTokenString, err := refreshToken.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessTokenString, refreshTokenString, nil
 }
