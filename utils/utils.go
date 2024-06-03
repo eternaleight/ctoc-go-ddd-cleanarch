@@ -16,18 +16,18 @@ import (
 
 // Gravatarの仕様がmd5を要求するため、Gravatar用のハッシュにはmd5を使用することが標準的な実装。
 // MD5はセキュリティ上の問題があるため、他の用途には使用しないでください。
-// getGravatarURLは、指定されたメールアドレスとサイズに基づいてGravatarのURLを生成します
+// getGravatarURLは、指定されたメールアドレスとサイズに基づいてGravatarのURLを生成
 func GetGravatarURL(email string, size int) string {
 	emailHash := fmt.Sprintf("%x", md5.Sum([]byte(strings.ToLower(strings.TrimSpace(email)))))
 	return fmt.Sprintf("https://www.gravatar.com/avatar/%s?s=%d&d=identicon", emailHash, size)
 }
 
-// ComparePasswordは、ハッシュ化されたパスワードとプレーンなパスワードを比較します
+// ComparePasswordは、ハッシュ化されたパスワードとプレーンなパスワードを比較
 func ComparePassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-// Encryptは、指定されたテキストをAES暗号化して返します
+// Encryptは、指定されたテキストをAES暗号化して返す
 func Encrypt(text string) (string, error) {
 	key := []byte(os.Getenv("ENCRYPTION_KEY"))
 	block, err := aes.NewCipher(key)
@@ -49,7 +49,7 @@ func Encrypt(text string) (string, error) {
 	return base64.URLEncoding.EncodeToString(ciphertext), nil
 }
 
-// Decryptは、AES暗号化されたテキストを復号化して返します
+// Decryptは、AES暗号化されたテキストを復号化して返す
 func Decrypt(cryptoText string) (string, error) {
 	key := []byte(os.Getenv("ENCRYPTION_KEY"))
 	ciphertext, _ := base64.URLEncoding.DecodeString(cryptoText)

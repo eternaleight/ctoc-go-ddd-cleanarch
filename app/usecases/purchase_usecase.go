@@ -14,7 +14,7 @@ type PurchaseUsecases struct {
 	PurchaseStore stores.PurchaseStoreInterface
 }
 
-// PurchaseUsecasesの新しいインスタンスを初期化します
+// PurchaseUsecasesの新しいインスタンスを初期化
 func NewPurchaseUsecases(purchaseStore stores.PurchaseStoreInterface) *PurchaseUsecases {
 	return &PurchaseUsecases{
 		PurchaseStore: purchaseStore,

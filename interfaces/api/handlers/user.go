@@ -7,19 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ユーザー関連のハンドラを管理します
+// ユーザー関連のハンドラを管理
 type UserHandler struct {
 	UserUsecases usecases.UserUsecasesInterface
 }
 
-// UserHandlerの新しいインスタンスを初期化します
+// UserHandlerの新しいインスタンスを初期化
 func NewUserHandler(userUsecases usecases.UserUsecasesInterface) *UserHandler {
 	return &UserHandler{
 		UserUsecases: userUsecases,
 	}
 }
 
-// ユーザー情報を取得します
+// ユーザー情報を取得
 func (h *UserHandler) GetUser(c *gin.Context) {
 	// ミドルウェアからuserIDを取得
 	userID := c.MustGet("userID").(uint)

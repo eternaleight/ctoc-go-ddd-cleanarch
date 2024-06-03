@@ -11,26 +11,26 @@ import (
 	"github.com/eternaleight/go-backend/utils"
 )
 
-// 認証に関するユースケースのインターフェースを定義します
+// 認証に関するユースケースのインターフェースを定義
 type AuthUsecasesInterface interface {
 	RegisterUser(username, email, password string) (*models.User, string, string, string, string, error)
 	LoginUser(email, password string) (string, string, string, error)
 	RefreshToken(refreshTokenString string) (string, string, error)
 }
 
-// 認証に関するユースケースの具体的な実装を定義します
+// 認証に関するユースケースの具体的な実装を定義
 type AuthUsecases struct {
 	AuthStore stores.AuthStoreInterface
 }
 
-// 新しいインスタンスを初期化します
+// 新しいインスタンスを初期化
 func NewAuthUsecases(authStore stores.AuthStoreInterface) *AuthUsecases {
 	return &AuthUsecases{
 		AuthStore: authStore,
 	}
 }
 
-// ユーザーを登録します
+// ユーザーを登録
 func (u AuthUsecases) RegisterUser(username, email, password string) (*models.User, string, string, string, string, error) {
 	// ユーザーを登録
 	user, err := u.AuthStore.RegisterUser(username, email, password)
@@ -51,7 +51,7 @@ func (u AuthUsecases) RegisterUser(username, email, password string) (*models.Us
 	return user, emailMd5Hash, gravatarURL, accessToken, refreshToken, nil
 }
 
-// LoginUserはユーザーのログインを処理します
+// LoginUserはユーザーのログインを処理
 func (u AuthUsecases) LoginUser(email, password string) (string, string, string, error) {
 	// メールでユーザーを取得
 	user, err := u.AuthStore.GetUserByEmail(email)
@@ -75,7 +75,7 @@ func (u AuthUsecases) LoginUser(email, password string) (string, string, string,
 	return gravatarURL, accessToken, refreshToken, nil
 }
 
-// RefreshTokenはリフレッシュトークンを使用して新しいアクセストークンを発行します
+// RefreshTokenはリフレッシュトークンを使用して新しいアクセストークンを発行
 func (u AuthUsecases) RefreshToken(refreshTokenString string) (string, string, error) {
 	// リフレッシュトークンを解析
 	token, err := jwt.Parse(refreshTokenString, func(token *jwt.Token) (interface{}, error) {

@@ -8,29 +8,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 認証関連のリクエストを処理します
+// 認証関連のリクエストを処理
 type AuthHandler struct {
 	AuthUsecases usecases.AuthUsecasesInterface
 }
 
-// 新しいAuthHandlerのインスタンスを初期化します
+// 新しいAuthHandlerのインスタンスを初期化
 func NewAuthHandler(authUsecases usecases.AuthUsecasesInterface) *AuthHandler {
 	return &AuthHandler{
 		AuthUsecases: authUsecases,
 	}
 }
 
-// 新しいユーザーを登録します
+// 新しいユーザーを登録
 func (h *AuthHandler) Register(c *gin.Context) {
 	var input dtos.RegisterRequest
 
-	// リクエストからJSONデータをバインドします
+	// リクエストからJSONデータをバインド
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// ユースケースを呼び出します
+	// ユースケースを呼び出す
 	user, emailMd5Hash, gravatarURL, accessTokenString, refreshTokenString, err := h.AuthUsecases.RegisterUser(input.Username, input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -51,17 +51,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// ユーザーのログインを処理します
+// ユーザーのログインを処理
 func (h *AuthHandler) Login(c *gin.Context) {
 	var input dtos.LoginRequest
 
-	// リクエストからJSONデータをバインドします
+	// リクエストからJSONデータをバインド
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// ユースケースを呼び出します
+	// ユースケースを呼び出す
 	gravatarURL, accessTokenString, refreshTokenString, err := h.AuthUsecases.LoginUser(input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -80,7 +80,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// リフレッシュトークンを使用してアクセストークンをリフレッシュします
+// リフレッシュトークンを使用してアクセストークンをリフレッシュ
 func (h *AuthHandler) Refresh(c *gin.Context) {
 	refreshTokenString := c.GetHeader("Refresh-Token")
 	if refreshTokenString == "" {

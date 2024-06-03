@@ -5,28 +5,28 @@ import (
 	"gorm.io/gorm"
 )
 
-// 購入ストア操作のインターフェースを定義します
+// 購入ストア操作のインターフェースを定義
 type PurchaseStoreInterface interface {
 	CreatePurchase(purchase *models.Purchase) error
 	GetPurchaseByID(id uint) (*models.Purchase, error)
 }
 
-// 購入に関連するデータベース操作を管理します
+// 購入に関連するデータベース操作を管理
 type PurchaseStore struct {
 	db *gorm.DB
 }
 
-// 新しいPurchaseStoreのインスタンスを初期化します
+// 新しいPurchaseStoreのインスタンスを初期化
 func NewPurchaseStore(db *gorm.DB) *PurchaseStore {
 	return &PurchaseStore{db: db}
 }
 
-// 新しい購入をデータベースに保存します
+// 新しい購入をデータベースに保存
 func (ps *PurchaseStore) CreatePurchase(purchase *models.Purchase) error {
 	return ps.db.Create(purchase).Error
 }
 
-// 指定されたIDの購入情報を取得します
+// 指定されたIDの購入情報を取得
 func (ps *PurchaseStore) GetPurchaseByID(id uint) (*models.Purchase, error) {
 	var purchase models.Purchase
 	err := ps.db.First(&purchase, id).Error
