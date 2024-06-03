@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/eternaleight/go-backend/utils"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // 認証に関するユースケースのインターフェースを定義
