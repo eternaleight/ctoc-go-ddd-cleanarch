@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/eternaleight/go-backend/app/dtos"
 	"github.com/eternaleight/go-backend/domain/models"
+	"github.com/eternaleight/go-backend/interfaces/api/dtos"
 	"github.com/gin-gonic/gin"
 )
 
