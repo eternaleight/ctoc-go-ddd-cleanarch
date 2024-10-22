@@ -3,17 +3,22 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/eternaleight/go-backend/app/usecases"
+	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/gin-gonic/gin"
 )
 
+type PostUsecasesInterface interface {
+	CreatePost(content string, userID uint) (*models.Post, error)
+	GetLatestPosts() ([]models.Post, error)
+}
+
 // 投稿関連のリクエストを処理
 type PostHandler struct {
-	PostUsecases usecases.PostUsecasesInterface
+	PostUsecases PostUsecasesInterface
 }
 
 // 新しいPostHandlerのインスタンスを初期化
-func NewPostHandler(postUsecases usecases.PostUsecasesInterface) *PostHandler {
+func NewPostHandler(postUsecases PostUsecasesInterface) *PostHandler {
 	return &PostHandler{
 		PostUsecases: postUsecases,
 	}

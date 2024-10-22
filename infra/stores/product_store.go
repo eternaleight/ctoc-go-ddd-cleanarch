@@ -6,15 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 商品ストア操作のインターフェースを定義
-type ProductStoreInterface interface {
-	CreateProduct(product *models.Product) error
-	ListProducts() ([]models.Product, error)
-	GetProductByID(id uint) (*models.Product, error)
-	UpdateProduct(id uint, product *models.Product) error
-	DeleteProduct(id uint) error
-}
-
 // 商品に関するデータベース操作を管理
 type ProductStore struct {
 	db *gorm.DB

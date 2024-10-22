@@ -18,3 +18,9 @@ type Product struct {
 func (Product) TableName() string {
 	return "Product"
 }
+
+type ProductInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Price       int    `json:"price"`
+}

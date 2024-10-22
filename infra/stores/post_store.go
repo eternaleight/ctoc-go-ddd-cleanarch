@@ -5,12 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 投稿ストア操作のインターフェースを定義
-type PostStoreInterface interface {
-	CreatePost(post *models.Post) error
-	GetLatestPosts() ([]models.Post, error)
-}
-
 // 投稿に関するデータベース操作を管理
 type PostStore struct {
 	DB *gorm.DB

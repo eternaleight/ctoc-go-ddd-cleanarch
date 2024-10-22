@@ -6,12 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 認証ストア操作のインターフェースを定義
-type AuthStoreInterface interface {
-	RegisterUser(username, email, password string) (*models.User, error)
-	GetUserByEmail(email string) (*models.User, error)
-}
-
 // 認証に関連するデータベース操作を管理
 type AuthStore struct {
 	DB *gorm.DB

@@ -6,25 +6,23 @@ import (
 	"time"
 
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/eternaleight/go-backend/utils"
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// 認証に関するユースケースのインターフェースを定義
-type AuthUsecasesInterface interface {
-	RegisterUser(username, email, password string) (*models.User, string, string, string, string, error)
-	LoginUser(email, password string) (string, string, string, error)
-	RefreshToken(refreshTokenString string) (string, string, error)
+// 認証ストア操作のインターフェースを定義
+type AuthStoreInterface interface {
+	RegisterUser(username, email, password string) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 // 認証に関するユースケースの具体的な実装を定義
 type AuthUsecases struct {
-	AuthStore stores.AuthStoreInterface
+	AuthStore AuthStoreInterface
 }
 
 // 新しいインスタンスを初期化
-func NewAuthUsecases(authStore stores.AuthStoreInterface) *AuthUsecases {
+func NewAuthUsecases(authStore AuthStoreInterface) *AuthUsecases {
 	return &AuthUsecases{
 		AuthStore: authStore,
 	}

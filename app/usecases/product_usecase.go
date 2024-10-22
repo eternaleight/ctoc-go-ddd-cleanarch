@@ -2,35 +2,29 @@ package usecases
 
 import (
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-type ProductInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       int    `json:"price"`
-}
-
-type ProductUsecasesInterface interface {
-	CreateProduct(input ProductInput) (*models.Product, error)
+// 商品ストア操作のインターフェースを定義
+type ProductStoreInterface interface {
+	CreateProduct(product *models.Product) error
 	ListProducts() ([]models.Product, error)
 	GetProductByID(id uint) (*models.Product, error)
-	UpdateProduct(id uint, input ProductInput) (*models.Product, error)
+	UpdateProduct(id uint, product *models.Product) error
 	DeleteProduct(id uint) error
 }
 
 type ProductUsecases struct {
-	ProductStore stores.ProductStoreInterface
+	ProductStore ProductStoreInterface
 }
 
 // ProductUsecasesの新しいインスタンスを初期化
-func NewProductUsecases(productStore stores.ProductStoreInterface) *ProductUsecases {
+func NewProductUsecases(productStore ProductStoreInterface) *ProductUsecases {
 	return &ProductUsecases{
 		ProductStore: productStore,
 	}
 }
 
-func (u *ProductUsecases) CreateProduct(input ProductInput) (*models.Product, error) {
+func (u *ProductUsecases) CreateProduct(input models.ProductInput) (*models.Product, error) {
 	product := models.Product{
 		Name:        input.Name,
 		Description: input.Description,
@@ -61,7 +55,7 @@ func (u *ProductUsecases) GetProductByID(id uint) (*models.Product, error) {
 	return product, nil
 }
 
-func (u *ProductUsecases) UpdateProduct(id uint, input ProductInput) (*models.Product, error) {
+func (u *ProductUsecases) UpdateProduct(id uint, input models.ProductInput) (*models.Product, error) {
 	product := models.Product{
 		Name:        input.Name,
 		Description: input.Description,

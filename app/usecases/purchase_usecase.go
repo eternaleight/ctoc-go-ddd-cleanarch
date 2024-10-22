@@ -2,20 +2,20 @@ package usecases
 
 import (
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-type PurchaseUsecasesInterface interface {
+// 購入ストア操作のインターフェースを定義
+type PurchaseStoreInterface interface {
 	CreatePurchase(purchase *models.Purchase) error
 	GetPurchaseByID(id uint) (*models.Purchase, error)
 }
 
 type PurchaseUsecases struct {
-	PurchaseStore stores.PurchaseStoreInterface
+	PurchaseStore PurchaseStoreInterface
 }
 
 // PurchaseUsecasesの新しいインスタンスを初期化
-func NewPurchaseUsecases(purchaseStore stores.PurchaseStoreInterface) *PurchaseUsecases {
+func NewPurchaseUsecases(purchaseStore PurchaseStoreInterface) *PurchaseUsecases {
 	return &PurchaseUsecases{
 		PurchaseStore: purchaseStore,
 	}

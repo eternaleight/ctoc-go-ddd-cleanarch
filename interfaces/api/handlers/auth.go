@@ -4,17 +4,24 @@ import (
 	"net/http"
 
 	"github.com/eternaleight/go-backend/app/dtos"
-	"github.com/eternaleight/go-backend/app/usecases"
+	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/gin-gonic/gin"
 )
 
+// 認証に関するユースケースのインターフェースを定義
+type AuthUsecasesInterface interface {
+	RegisterUser(username, email, password string) (*models.User, string, string, string, string, error)
+	LoginUser(email, password string) (string, string, string, error)
+	RefreshToken(refreshTokenString string) (string, string, error)
+}
+
 // 認証関連のリクエストを処理
 type AuthHandler struct {
-	AuthUsecases usecases.AuthUsecasesInterface
+	AuthUsecases AuthUsecasesInterface
 }
 
 // 新しいAuthHandlerのインスタンスを初期化
-func NewAuthHandler(authUsecases usecases.AuthUsecasesInterface) *AuthHandler {
+func NewAuthHandler(authUsecases AuthUsecasesInterface) *AuthHandler {
 	return &AuthHandler{
 		AuthUsecases: authUsecases,
 	}

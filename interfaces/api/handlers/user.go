@@ -3,17 +3,21 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/eternaleight/go-backend/app/usecases"
+	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/gin-gonic/gin"
 )
 
+type UserUsecasesInterface interface {
+	GetUserByID(userID uint) (*models.User, error)
+}
+
 // ユーザー関連のハンドラを管理
 type UserHandler struct {
-	UserUsecases usecases.UserUsecasesInterface
+	UserUsecases UserUsecasesInterface
 }
 
 // UserHandlerの新しいインスタンスを初期化
-func NewUserHandler(userUsecases usecases.UserUsecasesInterface) *UserHandler {
+func NewUserHandler(userUsecases UserUsecasesInterface) *UserHandler {
 	return &UserHandler{
 		UserUsecases: userUsecases,
 	}

@@ -4,20 +4,20 @@ import (
 	"fmt"
 
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-type PostUsecasesInterface interface {
-	CreatePost(content string, userID uint) (*models.Post, error)
+// 投稿ストア操作のインターフェースを定義
+type PostStoreInterface interface {
+	CreatePost(post *models.Post) error
 	GetLatestPosts() ([]models.Post, error)
 }
 
 type PostUsecases struct {
-	PostStore stores.PostStoreInterface
+	PostStore PostStoreInterface
 }
 
 // PostUsecasesの新しいインスタンスを初期化
-func NewPostUsecases(postStore stores.PostStoreInterface) *PostUsecases {
+func NewPostUsecases(postStore PostStoreInterface) *PostUsecases {
 	return &PostUsecases{
 		PostStore: postStore,
 	}

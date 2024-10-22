@@ -2,19 +2,21 @@ package usecases
 
 import (
 	"github.com/eternaleight/go-backend/domain/models"
-	"github.com/eternaleight/go-backend/infra/stores"
 )
 
-type UserUsecasesInterface interface {
-	GetUserByID(userID uint) (*models.User, error)
+// ユーザーストア操作のインターフェースを定義
+type UserStoreInterface interface {
+	CreateUser(user *models.User) error
+	GetUserByID(id uint) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 }
 
 type UserUsecases struct {
-	UserStore stores.UserStoreInterface
+	UserStore UserStoreInterface
 }
 
 // UserUsecasesの新しいインスタンスを初期化
-func NewUserUsecases(userStore stores.UserStoreInterface) *UserUsecases {
+func NewUserUsecases(userStore UserStoreInterface) *UserUsecases {
 	return &UserUsecases{
 		UserStore: userStore,
 	}

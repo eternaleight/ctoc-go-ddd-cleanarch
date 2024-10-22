@@ -4,16 +4,24 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/eternaleight/go-backend/app/usecases"
+	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/gin-gonic/gin"
 )
 
+type ProductUsecasesInterface interface {
+	CreateProduct(input models.ProductInput) (*models.Product, error)
+	ListProducts() ([]models.Product, error)
+	GetProductByID(id uint) (*models.Product, error)
+	UpdateProduct(id uint, input models.ProductInput) (*models.Product, error)
+	DeleteProduct(id uint) error
+}
+
 type ProductHandler struct {
-	ProductUsecases usecases.ProductUsecasesInterface
+	ProductUsecases ProductUsecasesInterface
 }
 
 // 新しいProductHandlerのインスタンスを初期化
-func NewProductHandler(productUsecases usecases.ProductUsecasesInterface) *ProductHandler {
+func NewProductHandler(productUsecases ProductUsecasesInterface) *ProductHandler {
 	return &ProductHandler{
 		ProductUsecases: productUsecases,
 	}
@@ -21,7 +29,7 @@ func NewProductHandler(productUsecases usecases.ProductUsecasesInterface) *Produ
 
 // 新しい商品を作成
 func (ph *ProductHandler) CreateProduct(c *gin.Context) {
-	var product usecases.ProductInput
+	var product models.ProductInput
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "商品のデータの形式が正しくありません。"})
 		return
@@ -72,7 +80,7 @@ func (ph *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	var product usecases.ProductInput
+	var product models.ProductInput
 	if err := c.ShouldBindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "商品のデータの形式が正しくありません。"})
 		return

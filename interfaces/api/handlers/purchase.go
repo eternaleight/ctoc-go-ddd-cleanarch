@@ -3,18 +3,22 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/eternaleight/go-backend/app/usecases"
 	"github.com/eternaleight/go-backend/domain/models"
 	"github.com/gin-gonic/gin"
 )
 
+type PurchaseUsecasesInterface interface {
+	CreatePurchase(purchase *models.Purchase) error
+	GetPurchaseByID(id uint) (*models.Purchase, error)
+}
+
 // 購入関連のハンドラを管理
 type PurchaseHandler struct {
-	PurchaseUsecases usecases.PurchaseUsecasesInterface
+	PurchaseUsecases PurchaseUsecasesInterface
 }
 
 // 新しいPurchaseHandlerを初期化して返す
-func NewPurchaseHandler(purchaseUsecases usecases.PurchaseUsecasesInterface) *PurchaseHandler {
+func NewPurchaseHandler(purchaseUsecases PurchaseUsecasesInterface) *PurchaseHandler {
 	return &PurchaseHandler{
 		PurchaseUsecases: purchaseUsecases,
 	}

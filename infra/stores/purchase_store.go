@@ -5,12 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 購入ストア操作のインターフェースを定義
-type PurchaseStoreInterface interface {
-	CreatePurchase(purchase *models.Purchase) error
-	GetPurchaseByID(id uint) (*models.Purchase, error)
-}
-
 // 購入に関連するデータベース操作を管理
 type PurchaseStore struct {
 	db *gorm.DB

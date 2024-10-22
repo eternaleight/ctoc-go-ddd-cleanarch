@@ -5,13 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// ユーザーストア操作のインターフェースを定義
-type UserStoreInterface interface {
-	CreateUser(user *models.User) error
-	GetUserByID(id uint) (*models.User, error)
-	GetUserByEmail(email string) (*models.User, error)
-}
-
 // ユーザーに関するデータベース操作を管理
 type UserStore struct {
 	DB *gorm.DB
