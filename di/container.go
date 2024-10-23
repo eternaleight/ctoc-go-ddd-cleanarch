@@ -1,14 +1,14 @@
 package di
 
 import (
-	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/eternaleight/go-backend/app/usecases"
+	"github.com/eternaleight/go-backend/infra/stores"
 	"github.com/eternaleight/go-backend/interfaces/api/handlers"
 	"gorm.io/gorm"
 )
 
-// すべてのハンドラを初期化し、返す
-func InitializeHandlers(db *gorm.DB) (*handlers.AuthHandler, *handlers.ProductHandler, *handlers.PurchaseHandler, *handlers.UserHandler, *handlers.PostHandler) {
+// 依存性を注入してハンドラを返す処理
+func ProvideHandlers(db *gorm.DB) (*handlers.AuthHandler, *handlers.ProductHandler, *handlers.PurchaseHandler, *handlers.UserHandler, *handlers.PostHandler) {
 
 	// ストアのインスタンスを作成
 	authStore := stores.NewAuthStore(db)
@@ -33,4 +33,3 @@ func InitializeHandlers(db *gorm.DB) (*handlers.AuthHandler, *handlers.ProductHa
 
 	return authHandler, productHandler, purchaseHandler, userHandler, postHandler
 }
-

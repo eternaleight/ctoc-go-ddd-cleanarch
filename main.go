@@ -10,8 +10,8 @@ func main() {
 	dsn := config.LoadConfig() // dsn Data Source Name
 	db := config.InitializeDatabase(dsn)
 
-	// 依存性を初期化
-	authHandler, productHandler, purchaseHandler, userHandler, postHandler := di.InitializeHandlers(db)
+	// 依存性を注入
+	authHandler, productHandler, purchaseHandler, userHandler, postHandler := di.ProvideHandlers(db)
 
 	// ルーターを設定
 	r := interfaces.SetupRouter(authHandler, productHandler, purchaseHandler, userHandler, postHandler)
